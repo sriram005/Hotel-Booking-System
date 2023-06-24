@@ -1,7 +1,10 @@
 package com.kce.hbs.dao;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Scanner;
 import com.kce.hbs.bean.Room;
+import com.kce.hbs.util.DBUtil;
 
 public class HotelBookingDAO {
     public static Room getBookingDetails() {
@@ -41,5 +44,29 @@ public class HotelBookingDAO {
         room = new Room(hotelId, name, location, roomNo, guestCount, guestName, check_in_date, check_out_date);
 
         return room;
+    }
+
+    public static boolean update_Check_out_date() throws Exception {
+        Scanner sc = new Scanner(System.in);
+        // Getting hotel Id
+        System.out.println("Enter your Hotel Id: ");
+        int hotelId = sc.nextInt();
+        // Getting Room No
+        System.out.println("Enter your Room No: ");
+        int roomNo = sc.nextInt();
+        // Getting updated date
+        System.out.println("Enetr the new Check out Date: ");
+        String updatedDate = sc.nextLine();
+
+        // Creating Connection to the Database
+        Connection con = DBUtil.getConnection();
+        Statement stmt = con.createStatement();
+        String query = "UPDATE check_out_date = " + updatedDate + " where hotelId = " + hotelId + "and roomNo = "
+                + roomNo;
+        int n = stmt.executeUpdate(query);
+        if (n == 1)
+            return true;
+        else
+            return false;
     }
 }

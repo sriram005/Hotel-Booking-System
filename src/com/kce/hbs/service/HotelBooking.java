@@ -1,6 +1,7 @@
 package com.kce.hbs.service;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -31,6 +32,12 @@ public class HotelBooking {
                 case 1:
                     CreatingBooking();
                     break;
+                case 2:
+                    if (HotelBookingDAO.update_Check_out_date())
+                        System.out.println("Check out date updated Successfully");
+                    else
+                        System.out.println("Sothing Wrong");
+                    break;
             }
         }
     }
@@ -46,6 +53,23 @@ public class HotelBooking {
             if (getRooms(room.getHotelId()).contains(room.getRoomNo())) {
                 throw new RoomUnAvailableException();
             }
+
+            Connection con = DBUtil.getConnection();
+            PreparedStatement stmt1 = con.prepareStatement("INSERT INTO Room VALUES(?,?,?,?,?,?)");
+            PreparedStatement stmt2 = con.prepareStatement("INSERT INTO Hotel VALUES(?,?,?)");
+            stmt1.setInt(1, room.getHotelId());
+            stmt1.setInt(2, room.getRoomNo());
+            stmt1.setString(3, room.getGuestName());
+            stmt1.setInt(4, room.getGuestCount());
+            stmt1.setString(5, room.getCheck_in_date());
+            stmt1.setString(6, room.getCheck_out_date());
+            stmt1.executeUpdate();
+
+            stmt2.setInt(1, room.getHotelId());
+            stmt2.setString(2, room.getName());
+            stmt2.setString(3, room.getLocation());
+            stmt2.executeUpdate();
+
         } catch (OverBookingException e) {
             System.err.println("Sorry! All rooms are Booked");
         }
