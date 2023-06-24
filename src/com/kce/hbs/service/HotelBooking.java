@@ -47,6 +47,7 @@ public class HotelBooking {
                     break;
                 case 4:
                     List<Room> list = HotelBookingDAO.getAllBookings();
+
                     list.stream().forEach(System.out::println);
                     break;
                 case 5:
@@ -71,7 +72,6 @@ public class HotelBooking {
 
             Connection con = DBUtil.getConnection();
             PreparedStatement stmt1 = con.prepareStatement("INSERT INTO Room VALUES(?,?,?,?,?,?)");
-            PreparedStatement stmt2 = con.prepareStatement("INSERT INTO Hotel VALUES(?,?,?)");
             stmt1.setInt(1, room.getHotelId());
             stmt1.setInt(2, room.getRoomNo());
             stmt1.setString(3, room.getGuestName());
@@ -80,13 +80,12 @@ public class HotelBooking {
             stmt1.setString(6, room.getCheck_out_date());
             stmt1.executeUpdate();
 
-            stmt2.setInt(1, room.getHotelId());
-            stmt2.setString(2, room.getName());
-            stmt2.setString(3, room.getLocation());
-            stmt2.executeUpdate();
+            System.out.println("\nBooking Successful....\n");
 
         } catch (OverBookingException e) {
-            System.err.println("Sorry! All rooms are Booked");
+            System.err.println(e);
+        } catch (RoomUnAvailableException e) {
+            System.out.println(e);
         }
 
     }

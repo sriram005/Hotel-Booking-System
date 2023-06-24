@@ -1,6 +1,7 @@
 package com.kce.hbs.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -12,8 +13,6 @@ import com.kce.hbs.util.DBUtil;
 public class HotelBookingDAO {
     public static Room getBookingDetails() {
         int hotelId; // hotelId of the Hotel (generated using random() method )
-        String name; // hotel name
-        String location; // location of the hotel
         int roomNo; // room no that guest wants
         int guestCount; // total no of guest
         String guestName; // guest name (one who books the room)
@@ -26,11 +25,14 @@ public class HotelBookingDAO {
         // Scanner for getting inputs
         Scanner sc = new Scanner(System.in);
 
-        hotelId = (int) Math.random() * (5 - 1 + 1) + 1; // random number of three digits for hotel id
-        System.out.println("Enter Hotel Name: ");
-        name = sc.nextLine();
-        System.out.println("Enter Location:");
-        location = sc.nextLine();
+        System.out.println("\n--------------Hotel Details--------------\n");
+        System.out.println("1) ABC Hotel, Chennai");
+        System.out.println("2) XYZ Hotel, Coimbatore");
+        System.out.println("3) Hotel Hari, Coimbatore");
+        System.out.println("4) Hotel SRK, Chennai");
+        System.out.println("5) PQR Hotel, Chennai\n");
+        System.out.println("Enter Hotel Id: ");
+        hotelId = sc.nextInt();
         System.out.println("Enter Room no: ");
         roomNo = sc.nextInt();
         System.out.println("Enter Guest Count: ");
@@ -44,7 +46,7 @@ public class HotelBookingDAO {
         check_out_date = sc.nextLine();
 
         // Initialize the Room class fields with the Constructor
-        room = new Room(hotelId, name, location, roomNo, guestCount, guestName, check_in_date, check_out_date);
+        room = new Room(hotelId, roomNo, guestCount, guestName, check_in_date, check_out_date);
 
         return room;
     }
@@ -57,16 +59,19 @@ public class HotelBookingDAO {
         // Getting Room No
         System.out.println("Enter your Room No: ");
         int roomNo = sc.nextInt();
+        sc.nextLine();
         // Getting updated date
         System.out.println("Enetr the new Check out Date: ");
         String updatedDate = sc.nextLine();
-
+        System.out.println(updatedDate);
         // Creating Connection to the Database
         Connection con = DBUtil.getConnection();
-        Statement stmt = con.createStatement();
-        String query = "UPDATE Room set check_out_date = " + updatedDate + " where hotelId = " + hotelId
-                + "and roomNo = " + roomNo;
-        int n = stmt.executeUpdate(query);
+        String query = "UPDATE Room SET  check_out_date = ? where hotelId = ? and1 roomNo = ?";
+        PreparedStatement stmt = con.prepareStatement(query);
+        stmt.setString(1, updatedDate);
+        stmt.setInt(2, hotelId);
+        stmt.setInt(3, roomNo);
+        int n = stmt.executeUpdate();
         if (n == 1)
             return true;
         else
@@ -85,7 +90,7 @@ public class HotelBookingDAO {
         // Creating Connection to the Database
         Connection con = DBUtil.getConnection();
         Statement stmt = con.createStatement();
-        String query = "DELETE FROM Room where hotelId = " + hotelId + "and roomNo = " + roomNo;
+        String query = "DELETE FROM Room where hotelId = " + hotelId + " and roomNo = " + roomNo;
         int n = stmt.executeUpdate(query);
         if (n == 1)
             return true;

@@ -11,6 +11,10 @@ public class Hotel {
         this.location = location;
     }
 
+    public Hotel(int hotelId) {
+        this.hotelId = hotelId;
+    }
+
     public int getHotelId() {
         return hotelId;
     }
