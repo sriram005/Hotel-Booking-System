@@ -24,6 +24,7 @@ public class HotelBooking {
             System.out.println("2. Update Check out date");
             System.out.println("3. Check out");
             System.out.println("4. Display all the Bookings");
+            System.out.println("5. Exit");
             // getting choice from the user
             System.out.println("Enter your Choice : ");
             ch = sc.nextInt();
@@ -38,6 +39,20 @@ public class HotelBooking {
                     else
                         System.out.println("Sothing Wrong");
                     break;
+                case 3:
+                    if (HotelBookingDAO.checkOut())
+                        System.out.println("You have checked Out successfully.");
+                    else
+                        System.out.println("Somthing Wrong");
+                    break;
+                case 4:
+                    List<Room> list = HotelBookingDAO.getAllBookings();
+                    list.stream().forEach(System.out::println);
+                    break;
+                case 5:
+                    return;
+                default:
+                    System.out.println("Invalid Data");
             }
         }
     }

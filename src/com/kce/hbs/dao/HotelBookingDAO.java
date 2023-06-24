@@ -1,7 +1,10 @@
 package com.kce.hbs.dao;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import com.kce.hbs.bean.Room;
 import com.kce.hbs.util.DBUtil;
@@ -61,12 +64,58 @@ public class HotelBookingDAO {
         // Creating Connection to the Database
         Connection con = DBUtil.getConnection();
         Statement stmt = con.createStatement();
-        String query = "UPDATE check_out_date = " + updatedDate + " where hotelId = " + hotelId + "and roomNo = "
-                + roomNo;
+        String query = "UPDATE Room set check_out_date = " + updatedDate + " where hotelId = " + hotelId
+                + "and roomNo = " + roomNo;
         int n = stmt.executeUpdate(query);
         if (n == 1)
             return true;
         else
             return false;
+    }
+
+    public static boolean checkOut() throws Exception {
+        Scanner sc = new Scanner(System.in);
+        // Getting hotel Id
+        System.out.println("Enter your Hotel Id: ");
+        int hotelId = sc.nextInt();
+        // Getting Room No
+        System.out.println("Enter your Room No: ");
+        int roomNo = sc.nextInt();
+
+        // Creating Connection to the Database
+        Connection con = DBUtil.getConnection();
+        Statement stmt = con.createStatement();
+        String query = "DELETE FROM Room where hotelId = " + hotelId + "and roomNo = " + roomNo;
+        int n = stmt.executeUpdate(query);
+        if (n == 1)
+            return true;
+        else
+            return false;
+    }
+
+    public static List<Room> getAllBookings() throws Exception {
+        List<Room> list = new ArrayList<>();
+        Room room = null;
+
+        // Creating Connection to the Database
+        Connection con = DBUtil.getConnection();
+        Statement stmt = con.createStatement();
+        String query = "SELECT h.hotelId,h.name,h.location,r.roomNo,r.guestCount,r.guestName,r.check_in_date,r.check_out_date from Room r join Hotel h where h.hotelId = r.hotelId";
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            int hotelId = rs.getInt(1);
+            String name = rs.getString(2);
+            String location = rs.getString(3);
+            int roomNo = rs.getInt(4);
+            int guestCount = rs.getInt(5);
+            String guestName = rs.getString(6);
+            String check_in_date = rs.getString(7);
+            String check_out_date = rs.getString(8);
+
+            room = new Room(hotelId, name, location, roomNo, guestCount, guestName, check_in_date, check_out_date);
+            list.add(room);
+        }
+
+        return list;
     }
 }
